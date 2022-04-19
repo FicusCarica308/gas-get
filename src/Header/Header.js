@@ -7,9 +7,7 @@ import { GOOGLE_MAPS_API_KEY } from '../private-config';
 
 const libraries = ['places'];
 
-function Header() {
-  const originPlace = React.useRef('initial');
-
+function Header(props) {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries: libraries
@@ -18,7 +16,7 @@ function Header() {
   return isLoaded ? (
     <header className="App-header">
       <Autocomplete>
-        <PlaceInput labelValue={'Location'} originPlace={originPlace}/>
+        <PlaceInput labelValue={'Location'} originPlace={props.originPlace}/>
       </Autocomplete>
     </header>
   ) : <></>

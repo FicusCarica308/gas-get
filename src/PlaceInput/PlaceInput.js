@@ -10,22 +10,21 @@ class PlaceInput extends React.Component {
 
   handleRef(event) {
     event.preventDefault();
-    alert(this.props.originPlace.current);
+    alert(this.props.originPlace.current.value);
   }
 
   render() {
     return (
       <form className="App-PlaceInput" onSubmit={this.handleRef}>
         <label htmlFor="destination">{this.props.labelValue}:</label><br></br>
-        <h1>{this.props.originPlace.current}</h1>
-        <input type="text" id="destination" name="destination"></input>
+        <input type="text" id="destination" name="destination" ref={this.props.originPlace}></input>
       </form>
     );
   }
 }
 
 /* add proptypes */
-// ref
+// originPlace
 // labelValue
 
 export default PlaceInput;
