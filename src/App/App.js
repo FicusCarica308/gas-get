@@ -1,13 +1,16 @@
 /* import logo from '../assets/logo.svg'; */
 /* import { useJsApiLoader, GoogleMap, Marker, Autocomplete } from '@react-google-maps/api'; */
+import React from 'react';
 import Header from '../Header/Header'
 import './App.css';
 
 function App() {
+  const originPlace = React.useRef('initial');
+
   return (
     <div className="App">
       <header className="App-header">
-        <Header />
+        <Header originPlace={originPlace}/>
       </header>
     </div>
   );
