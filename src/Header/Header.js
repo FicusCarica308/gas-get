@@ -1,25 +1,11 @@
 /* Header component */
-import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
-import React, { useEffect } from 'react';
-import PlaceInput from '../PlaceInput/PlaceInput';
+import React from 'react';
 import './Header.css';
-import { GOOGLE_MAPS_API_KEY } from '../private-config';
 
-const libraries = ['places'];
-
-function Header(props) {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: libraries
-  });
-
-  return isLoaded ? (
+export default function Header(props) {
+  return (
     <header className="App-header">
-      <Autocomplete>
-        <PlaceInput labelValue={'Location'} originPlace={props.originPlace}/>
-      </Autocomplete>
+      <h1> Header !</h1>
     </header>
-  ) : <></>
+  );
 }
-
-export default Header;
