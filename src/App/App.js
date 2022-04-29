@@ -1,9 +1,10 @@
 /* import logo from '../assets/logo.svg'; */
-import { GOOGLE_MAPS_API_KEY } from '../private-config';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import { GOOGLE_MAPS_API_KEY, GET_GAS_API_KEY } from '../private-config';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import React, { Component }from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
+import axios from 'axios';
 import './App.css';
 
 const withApiLoader = Component => props => {
@@ -41,13 +42,30 @@ class App extends Component{
       isGeoEnabled: false,
       currentGeo: {},
       combinedMPG: 0,
+      stations: [],
     }
+    this.getStations = this.getStations.bind(this);
+    this.setCombinedMPG = this.setCombinedMPG.bind(this);
+    this.setGeo = this.setGeo.bind(this);
   }
+
 
   setCombinedMPG = (newCombinedMPG) => {
     this.setState({
       combinedMPG: newCombinedMPG
     });
+  }
+
+  getStations(lat, lng) {
+    axios({
+      method: 'get',
+      url: `https://get-gas-api.herokuapp.com/stations/${GET_GAS_API_KEY}/${this.currentGeo.lat}/${this.currentGeo.lng}`,
+    })
+    .then(response => {
+      const stationsList = response.data;
+      console.log(stationsList);
+      this.setState({ stations: stationsList });
+    })
   }
 
   setGeo() {
@@ -87,6 +105,8 @@ class App extends Component{
         onLoad={this.props.onLoad}
         onUnmount={this.props.onUnmount}
         >
+        <Marker position={{...this.state.currentGeo}} label="Current Position">
+        </Marker>
         </GoogleMap>
         <Footer />
       </div>

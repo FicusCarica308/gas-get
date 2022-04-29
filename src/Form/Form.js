@@ -1,5 +1,7 @@
 import React from 'react';
 import './Form.css';
+import axios from 'axios';
+import { GET_GAS_API_KEY } from '../private-config';
 
 class Form extends React.Component {
   constructor(props) {
@@ -8,9 +10,22 @@ class Form extends React.Component {
       make: '',
       model: '',
       year: '',
+      combinedMPG: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.getCombinedMPG = this.getCombinedMPG.bind(this);
+  }
+
+  getCombinedMPG(make, model, year) {
+    axios({
+      method: 'get',
+      url: `https://get-gas-api.herokuapp.com/specs/${GET_GAS_API_KEY}/combination_mpg/${make}/${model}/${year}`,
+    })
+    .then(response => {
+      const carData = response.data;
+      this.props.setCombinedMPG(carData.combination_mpg);
+    })
   }
 
   handleChange = (event) => {
@@ -21,7 +36,7 @@ class Form extends React.Component {
 
   handleSubmit(event) {
     alert('Current State: ' + JSON.stringify(this.state));
-    this.props.setCombinedMPG(3);
+    this.getCombinedMPG(this.state.make, this.state.model, this.state.year);
     event.preventDefault();
   }
 
