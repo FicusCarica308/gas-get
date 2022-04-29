@@ -1,0 +1,22 @@
+.App-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    border-bottom: 5px double black;
+    height: 200px;
+}
+
+@media screen and (max-width: 568px) {
+    #logo-img {
+        display: none;
+    }
+}
+
+#logo-img {
+    height: 153px;
+    width: 121;
+    padding: 0;
+    margin: 0;
+}

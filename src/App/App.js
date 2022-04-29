@@ -1,6 +1,6 @@
 /* import logo from '../assets/logo.svg'; */
 import { GOOGLE_MAPS_API_KEY } from '../private-config';
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import React, { Component }from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -11,7 +11,7 @@ const withApiLoader = Component => props => {
     googleMapsApiKey: GOOGLE_MAPS_API_KEY
   });
 
-  const [map, setMap] = React.useState(null);
+  const [map, setMap] = React.useState(null); 
 
   const onLoad = React.useCallback(function callback(map) {
     const bounds = new window.google.maps.LatLngBounds();
@@ -28,7 +28,9 @@ const withApiLoader = Component => props => {
 
 const containerStyle = {
   width: '75vw',
-  height: '74.9vh',
+  height: '68.3vh',
+  borderLeft: '5px double black',
+  borderRight: '5px double black'
 };
 
 class App extends Component{
@@ -38,7 +40,14 @@ class App extends Component{
     this.state = {
       isGeoEnabled: false,
       currentGeo: {},
+      combinedMPG: 0,
     }
+  }
+
+  setCombinedMPG = (newCombinedMPG) => {
+    this.setState({
+      combinedMPG: newCombinedMPG
+    });
   }
 
   setGeo() {
@@ -70,7 +79,7 @@ class App extends Component{
   render() {
     return this.props.isLoaded ? (
       <div className="App">
-        <Header />
+        <Header setCombinedMPG={this.setCombinedMPG} combinedMPG={this.state.combinedMPG}/>
         <GoogleMap
         mapContainerStyle={containerStyle}
         center={{...this.state.currentGeo}}

@@ -1,6 +1,9 @@
 #car-info-form {
     display: flex;
     flex-direction: column;
+    border: 10px double rgb(79, 161, 255);
+    border-radius: 30px;
+    padding: 10px;
 }
 
 

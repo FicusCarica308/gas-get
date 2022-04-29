@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import './Form.css'
+import React from 'react';
+import './Form.css';
 
 class Form extends React.Component {
   constructor(props) {
@@ -21,6 +21,7 @@ class Form extends React.Component {
 
   handleSubmit(event) {
     alert('Current State: ' + JSON.stringify(this.state));
+    this.props.setCombinedMPG(3);
     event.preventDefault();
   }
 
