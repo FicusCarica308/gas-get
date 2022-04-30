@@ -4,13 +4,9 @@ A full React.js application that displays gas stations in you area based off you
 ## Project Objective:
 This project was originally supposed to be a application that finds the cheapest gas station based on miles traveled/price. Eventually I realized getting gas station prices was gonna be impossible for a small portfolio project so I abandoned the feature. However the project retains the ability to display the combination(City/Highway) MPG of a vehicle and gas stations in you area.
 
-## Routes:
-* /specs/:devKey/:type/:make/:model/:year/:cylinders?/ - Returns MPG data for a vehicle using an external API.
-* /stations/:devKey/:latitude/:longitude/ - Returns the GPS Coordinates of gas stations ranked closest to farthest using the given longitude and latitude. (uses google maps places API and includes the gas stations place_id)
-
 ### Technologies:
-* React.js -
-* 
+* React.js 
+
 ## Learning Objectives:
 * Practice building react components
 * Gain a deeper understanding of component state & lifecycles
