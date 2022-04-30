@@ -1,5 +1,4 @@
 /* import logo from '../assets/logo.svg'; */
-import { GOOGLE_MAPS_API_KEY, GET_GAS_API_KEY } from '../private-config';
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow, DistanceMatrixService } from '@react-google-maps/api';
 import React, { Component }from 'react';
 import Header from '../Header/Header';
@@ -7,10 +6,12 @@ import Footer from '../Footer/Footer';
 import axios from 'axios';
 import './App.css';
 
+const { REACT_APP_GOOGLE_MAPS_API_KEY, REACT_APP_GET_GAS_API_KEY } = process.env;
+
 /* GOOGLE MAPS SETUP (CUSTOM HOOK FUNCTION) */
 const withApiLoader = Component => props => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY
+    googleMapsApiKey: REACT_APP_GOOGLE_MAPS_API_KEY
   });
 
   const [map, setMap] = React.useState(null); 
@@ -82,7 +83,7 @@ class App extends Component{
     //return;
     axios({
       method: 'get',
-      url: `https://get-gas-api.herokuapp.com/stations/${GET_GAS_API_KEY}/${lat}/${lng}`,
+      url: `https://get-gas-api.herokuapp.com/stations/${REACT_APP_GET_GAS_API_KEY}/${lat}/${lng}`,
     })
     .then(response => {
       const stationsList = response.data;

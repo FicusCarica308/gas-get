@@ -1,7 +1,8 @@
 import React from 'react';
 import './Form.css';
 import axios from 'axios';
-import { GET_GAS_API_KEY } from '../private-config';
+
+const { REACT_APP_GET_GAS_API_KEY } = process.env;
 
 class Form extends React.Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class Form extends React.Component {
   getCombinedMPG(make, model, year) {
     axios({
       method: 'get',
-      url: `https://get-gas-api.herokuapp.com/specs/${GET_GAS_API_KEY}/combination_mpg/${make}/${model}/${year}`,
+      url: `https://get-gas-api.herokuapp.com/specs/${REACT_APP_GET_GAS_API_KEY}/combination_mpg/${make}/${model}/${year}`,
     })
     .then(response => {
       const carData = response.data;
