@@ -36,7 +36,6 @@ class Form extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('Current State: ' + JSON.stringify(this.state));
     this.getCombinedMPG(this.state.make, this.state.model, this.state.year);
     event.preventDefault();
   }
