@@ -6,9 +6,6 @@ import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import axios from 'axios';
 import './App.css';
-import * as stationsData from '../stations.json'
-
-console.log(stationsData);
 
 /* GOOGLE MAPS SETUP (CUSTOM HOOK FUNCTION) */
 const withApiLoader = Component => props => {
@@ -93,19 +90,6 @@ class App extends Component{
     })
   }
 
-  getDistance() {
-    axios({
-      method: 'get',
-      url: `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${this.state.selectedStation.latitude}%2C${this.state.selectedStation.longitude}
-      &origins=${this.state.currentGeo.lat}%2C${this.state.currentGeo.lng}
-      &key=${GOOGLE_MAPS_API_KEY}`
-    })
-    .then(response => {
-      const data = response.data;
-      console.log(data);
-    })
-  }
-
   /* Sets the current geographical cords of the user in this.state + calls this.getStations with the same values */
   setGeo() {
     navigator.geolocation.getCurrentPosition((position) => { /*switch to watchPosition in production */
@@ -136,7 +120,6 @@ class App extends Component{
   }
 
   render() {
-    if (this.state.stations === null) return console.log("was NULL");
     return this.props.isLoaded ? (
       <div className="App">
         <Header setCombinedMPG={this.setCombinedMPG} combinedMPG={this.state.combinedMPG}/>
