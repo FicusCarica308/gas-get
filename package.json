@@ -1,7 +1,9 @@
 {
   "name": "gas-get",
   "version": "0.1.0",
-  "private": true,
+  "engines": {
+    "node": "12.22.7"
+  },
   "dependencies": {
     "@react-google-maps/api": "^2.8.1",
     "@testing-library/jest-dom": "^5.11.5",
