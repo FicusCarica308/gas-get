@@ -1,12 +1,16 @@
 /* import logo from '../assets/logo.svg'; */
 import { GOOGLE_MAPS_API_KEY, GET_GAS_API_KEY } from '../private-config';
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Marker, InfoWindow, DistanceMatrixService } from '@react-google-maps/api';
 import React, { Component }from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import axios from 'axios';
 import './App.css';
+import * as stationsData from '../stations.json'
 
+console.log(stationsData);
+
+/* GOOGLE MAPS SETUP (CUSTOM HOOK FUNCTION) */
 const withApiLoader = Component => props => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY
@@ -33,49 +37,85 @@ const containerStyle = {
   borderLeft: '5px double black',
   borderRight: '5px double black'
 };
+/* ========================================================*/
+
+/* APP COMPONENT */
 
 class App extends Component{
-
   constructor(props) {
+    /* setup props and state along with function binding */
     super(props);
     this.state = {
       isGeoEnabled: false,
       currentGeo: {},
       combinedMPG: 0,
       stations: [],
+      selectedStation: null,
+      displayDistance: '',
     }
     this.getStations = this.getStations.bind(this);
     this.setCombinedMPG = this.setCombinedMPG.bind(this);
     this.setGeo = this.setGeo.bind(this);
+    this.setDisplayDistance = this.setDisplayDistance.bind(this);
   }
 
-
+  /* Setter function for setCombinedMPG state variables (passed into child component (Form)) */
   setCombinedMPG = (newCombinedMPG) => {
     this.setState({
       combinedMPG: newCombinedMPG
     });
   }
 
+  /* Sets the current selectedStation */
+  setSelectedStation(newStation) {
+    this.setState( {
+      selectedStation: newStation,
+    });
+  }
+
+  /* setDisplayDistance */
+  setDisplayDistance(newDistance) {
+    this.setState({
+      displayDistance: newDistance,
+    });
+  }
+
+  /* Makes a GET call to the backend API for the gas stations from closest to farthest  and sets the state */
   getStations(lat, lng) {
+    //return;
     axios({
       method: 'get',
-      url: `https://get-gas-api.herokuapp.com/stations/${GET_GAS_API_KEY}/${this.currentGeo.lat}/${this.currentGeo.lng}`,
+      url: `https://get-gas-api.herokuapp.com/stations/${GET_GAS_API_KEY}/${lat}/${lng}`,
     })
     .then(response => {
       const stationsList = response.data;
-      console.log(stationsList);
       this.setState({ stations: stationsList });
     })
   }
 
+  getDistance() {
+    axios({
+      method: 'get',
+      url: `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${this.state.selectedStation.latitude}%2C${this.state.selectedStation.longitude}
+      &origins=${this.state.currentGeo.lat}%2C${this.state.currentGeo.lng}
+      &key=${GOOGLE_MAPS_API_KEY}`
+    })
+    .then(response => {
+      const data = response.data;
+      console.log(data);
+    })
+  }
+
+  /* Sets the current geographical cords of the user in this.state + calls this.getStations with the same values */
   setGeo() {
-    navigator.geolocation.watchPosition((position) => {
+    navigator.geolocation.getCurrentPosition((position) => { /*switch to watchPosition in production */
       this.setState({
         currentGeo: {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         }
       })
+      this.getStations(position.coords.latitude, position.coords.longitude);
       /* Checks if user enabled geolocation or not */
       // if (Object.keys(this.state.currentGeo).length === 0) {
         // alert('Location services must be enabled !');
@@ -83,6 +123,7 @@ class App extends Component{
     });
   }
 
+  /* Checks the users browser to determine if geolocation is avaliable + calls this.setGeo */
   componentDidMount() {
     if ("geolocation" in navigator) {
       console.log("Geolocation Available");
@@ -95,18 +136,66 @@ class App extends Component{
   }
 
   render() {
+    if (this.state.stations === null) return console.log("was NULL");
     return this.props.isLoaded ? (
       <div className="App">
         <Header setCombinedMPG={this.setCombinedMPG} combinedMPG={this.state.combinedMPG}/>
         <GoogleMap
         mapContainerStyle={containerStyle}
-        center={{...this.state.currentGeo}}
+        /* Causes error if you dont pass an object with explicit {lat: "", lng: ""} propertis */
+        center={
+          this.state.selectedStation ? (
+            {lat: this.state.selectedStation.latitude, lng: this.state.selectedStation.longitude}
+          ) : (
+            {lat: this.state.currentGeo.lat, lng: this.state.currentGeo.lng}
+          )
+        }
         zoom={12}
         onLoad={this.props.onLoad}
         onUnmount={this.props.onUnmount}
         >
-        <Marker position={{...this.state.currentGeo}} label="Current Position">
-        </Marker>
+          <Marker position={{...this.state.currentGeo}}>
+          </Marker>
+          {
+            this.state.stations.map(station =>
+              <Marker
+                key={station.place_id}
+                position={{lat: station.latitude, lng: station.longitude}}
+                onClick={() => { this.setSelectedStation(station) }}
+                icon={{
+                  url: '/gasStationMarker.png',
+                  scaledSize: new window.google.maps.Size(50, 50)
+                }}
+              />
+            )
+          }
+          {this.state.selectedStation && (
+            <InfoWindow
+              position={{
+                lat: this.state.selectedStation.latitude,
+                lng: this.state.selectedStation.longitude
+              }}
+              onCloseClick={() => this.setSelectedStation(null)}
+            >
+              <div>
+                <h3>Gas Station</h3>
+                <p>Name: {this.state.selectedStation.name}</p>
+                <DistanceMatrixService
+                  options={{
+                            destinations: [{lat: this.state.selectedStation.latitude, lng: this.state.selectedStation.longitude}],
+                            origins: [{lng: this.state.currentGeo.lng, lat: this.state.currentGeo.lat}],
+                            travelMode: "DRIVING",
+                            //eslint-disable-next-line no-undef
+                            unitSystem: google.maps.UnitSystem.IMPERIAL,
+                          }}
+                  callback = {(response) => {this.setDisplayDistance(response.rows[0].elements[0].distance.text)}}
+                />
+                <p>{this.state.displayDistance}</p>
+                <p>Longitude: {this.state.selectedStation.longitude}</p>
+                <p>Latitude: {this.state.selectedStation.latitude}</p>
+              </div>
+            </InfoWindow>
+          )}
         </GoogleMap>
         <Footer />
       </div>
@@ -115,3 +204,4 @@ class App extends Component{
 }
 
 export default withApiLoader(App);
+/* onClick={() => {setSelectedStation(station)}} */
