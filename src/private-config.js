@@ -1,0 +1,4 @@
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const GET_GAS_API_KEY = process.env.GET_GAS_API_KEY;
+
+export { GOOGLE_MAPS_API_KEY, GET_GAS_API_KEY };
