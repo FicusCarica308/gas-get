@@ -1,4 +1,4 @@
-# get-get: DEPLOYED
+# gas-get: DEPLOYED
 A full React.js application that displays gas stations in you area based off your current location in addition it can find your vehicles combined MPG rating. This application uses my previously created API called get-gas-api(https://github.com/FicusCarica308/get-gas-api)
 
 ## Project Objective:
